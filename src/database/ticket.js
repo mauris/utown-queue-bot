@@ -2,8 +2,8 @@ const Sequelize = require("sequelize");
 
 module.exports = (sequelize, DataTypes) => {
   "use strict";
-  var Event = sequelize.define(
-    "Event",
+  var Ticket = sequelize.define(
+    "Ticket",
     {
       "ticketId":{
         "type": DataTypes.INTEGER.UNSIGNED,
@@ -52,5 +52,5 @@ module.exports = (sequelize, DataTypes) => {
     }
   );
 
-  return Event;
+  return Ticket;
 };
