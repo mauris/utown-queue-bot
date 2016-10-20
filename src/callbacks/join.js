@@ -39,7 +39,8 @@ module.exports = (query, code, num) => {
 
   let _user = null;
   let _event = null;
-  console.log(query.message)
+
+  bot.sendChatAction(userId, "typing");
   bot.editMessageReplyMarkup({reply_markup: {inline_keyboard: [[]]}}, {chat_id: userId, message_id: query.message.message_id});
   return models.User
     .findOrCreate({ where: { name: name, userId: userId } })

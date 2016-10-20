@@ -48,6 +48,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
   let _user = null;
   let _ticket = null;
 
+  bot.sendChatAction(replyChatId, "typing");
   models.User
     .findOrCreate({ where: { name: name, userId: replyChatId } })
     .then((users) => {
