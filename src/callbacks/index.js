@@ -16,11 +16,9 @@ bot.on('callback_query', (query) => {
     return;
   }
 
-  var name = query.message.chat.first_name + " " + query.message.chat.last_name;
-
   switch (data[0]) {
     case 'join':
-      require('./join')(callbackId, replyChatId, name, data[1], data[2]);
+      require('./join')(query, data[1], data[2]);
       break;
     default:
       break;
