@@ -33,7 +33,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
             },
             {
               text: "5",
-              callback_data: JSON.stringify(["join", eventCode, "6"]),
+              callback_data: JSON.stringify(["join", eventCode, "5"]),
             },
             {
               text: "6",

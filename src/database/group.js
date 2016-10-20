@@ -36,10 +36,10 @@ module.exports = (sequelize, DataTypes) => {
           });
 
           Group.hasMany(models.Ticket, {
-            "as": "ticket",
+            "as": "tickets",
             "foreignKey": {
-              "name": "ticketId",
-              "allowNull": false
+              "name": "groupId",
+              "allowNull": true
             }
           });
         }

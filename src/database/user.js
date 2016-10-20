@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
           User.hasMany(models.Ticket, {
             "as": "tickets",
             "foreignKey": {
-              "name": "ticketId",
+              "name": "userId",
               "allowNull": false
             }
           });

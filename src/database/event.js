@@ -46,7 +46,7 @@ module.exports = (sequelize, DataTypes) => {
           Event.hasMany(models.Ticket, {
             "as": "tickets",
             "foreignKey": {
-              "name": "ticketId",
+              "name": "eventId",
               "allowNull": false
             }
           });
@@ -54,7 +54,7 @@ module.exports = (sequelize, DataTypes) => {
           Event.hasMany(models.Group, {
             "as": "groups",
             "foreignKey": {
-              "name": "groupId",
+              "name": "eventId",
               "allowNull": false
             }
           });
