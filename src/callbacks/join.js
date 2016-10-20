@@ -12,7 +12,7 @@ let createTicket = (numberOfPeople, _user, _event) => {
             {
               "userId": _user.userId,
               "eventId": _event.eventId,
-              "noOfPeople": num
+              "noOfPeople": numberOfPeople
             },
             { transaction: t }
           )
