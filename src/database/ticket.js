@@ -18,6 +18,11 @@ module.exports = (sequelize, DataTypes) => {
       "noOfPeople": {
         "type": DataTypes.INTEGER.UNSIGNED,
         "allowNull": false
+      },
+      "isActive": {
+        "type": DataTypes.BOOLEAN,
+        "defaultValue": true,
+        "allowNull": false
       }
     },
     {
@@ -48,7 +53,14 @@ module.exports = (sequelize, DataTypes) => {
           });
         }
       },
-      "timestamps": false
+      "timestamps": false,
+      "indexes": [
+        {
+          "name": "idx_user_active_ticket",
+          "fields": ["userId", "isActive"],
+          "unique": false
+        }
+      ]
     }
   );
 
