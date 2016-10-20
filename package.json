@@ -22,7 +22,6 @@
   "homepage": "https://github.com/mauris/utownqueuebot#readme",
   "dependencies": {
     "bluebird": "^3.4.3",
-    "canvas": "^1.4.0",
     "dotenv": "^2.0.0",
     "moment": "^2.14.1",
     "mysql": "^2.11.1",
