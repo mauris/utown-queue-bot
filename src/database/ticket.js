@@ -15,6 +15,10 @@ module.exports = (sequelize, DataTypes) => {
         "defaultValue": Sequelize.NOW,
         "allowNull": false
       },
+      "datetimeStart": {
+        "type": DataTypes.DATE,
+        "allowNull": true
+      },
       "noOfPeople": {
         "type": DataTypes.INTEGER.UNSIGNED,
         "allowNull": false
