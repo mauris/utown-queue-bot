@@ -1,5 +1,4 @@
 const bot = require('../bot');
-const models = require('../database');
 
 const BOT_USERNAME = process.env.BOT_USERNAME;
 const COMMAND_REGEX = /^\/join(@\w+)*(\s+(.+))*\s*/i;
@@ -43,8 +42,4 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
       },
     })
     .catch(console.error);
-
-  /*
-  var eventCode = match[3];
-  */
 });
