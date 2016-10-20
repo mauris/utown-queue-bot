@@ -38,6 +38,11 @@ module.exports = (sequelize, DataTypes) => {
       "eventCode": {
         "type": DataTypes.CHAR(5),
         "allowNull": false
+      },
+      "averageWaitingTime": {
+        "type": DataTypes.INTEGER.UNSIGNED,
+        "defaultValue": 0,
+        "allowNull": false
       }
     },
     {
