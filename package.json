@@ -21,14 +21,12 @@
   "private": true,
   "homepage": "https://github.com/mauris/utownqueuebot#readme",
   "dependencies": {
-    "bcryptjs": "^2.3.0",
     "bluebird": "^3.4.3",
     "canvas": "^1.4.0",
     "dotenv": "^2.0.0",
     "moment": "^2.14.1",
+    "mysql": "^2.11.1",
     "node-telegram-bot-api": "^0.23.3",
-    "qrcode-reader": "^0.2.1",
-    "redis": "^2.6.2",
-    "redis-rate-limiter": "^1.0.5"
+    "sequelize": "^3.24.4"
   }
 }
