@@ -9,6 +9,10 @@ module.exports = (sequelize, DataTypes) => {
         "type": DataTypes.INTEGER,
         "primaryKey": true
       },
+      "name": {
+        "type": DataTypes.STRING,
+        "allowNull": false
+      },
       "datetimeJoined": {
         "type": DataTypes.DATE,
         "defaultValue": Sequelize.NOW,
