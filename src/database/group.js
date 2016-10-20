@@ -5,7 +5,7 @@ module.exports = (sequelize, DataTypes) => {
   var Group = sequelize.define(
     "Group",
     {
-      "ticketId":{
+      "groupId":{
         "type": DataTypes.INTEGER.UNSIGNED,
         "autoIncrement": true,
         "primaryKey": true
