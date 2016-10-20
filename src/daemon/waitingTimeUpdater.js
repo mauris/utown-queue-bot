@@ -7,4 +7,4 @@ let $controller = () => {
 };
 
 $controller();
-setInterval($controller, 120000);
+setInterval($controller, 60000);
