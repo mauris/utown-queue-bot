@@ -1,5 +1,6 @@
-require('./daemon');
-require('./commands');
-require('./callbacks');
-
-require('./database').sequelize.sync({ logging: console.log });
+require('./database').sequelize.sync({ logging: console.log })
+  .then(() => {
+    require('./daemon');
+    require('./commands');
+    require('./callbacks');
+  })
