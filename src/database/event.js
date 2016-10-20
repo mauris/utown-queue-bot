@@ -34,6 +34,10 @@ module.exports = (sequelize, DataTypes) => {
       "maxPeoplePerGroup": {
         "type": DataTypes.INTEGER.UNSIGNED,
         "allowNull": false
+      },
+      "eventCode": {
+        "type": DataTypes.CHAR(5),
+        "allowNull": false
       }
     },
     {
@@ -56,7 +60,14 @@ module.exports = (sequelize, DataTypes) => {
           });
         }
       },
-      "timestamps": false
+      "timestamps": false,
+      "indexes": [
+        {
+          "name": "idx_eventcode",
+          "fields": ["eventCode"],
+          "unique": true
+        }
+      ]
     }
   );
 
