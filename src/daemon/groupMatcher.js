@@ -1,7 +1,12 @@
 const models = require('../database');
 const Promise = require('bluebird');
+const bot = require('../bot');
 
 console.log('Daemon worker #' + process.pid + ' started.');
+
+let updateTicket = (group, ticket, transaction) => {
+  return ticket.update({groupId: group.groupId, datetimeStart: models.sequelize.fn('NOW')}, {transaction: transaction});
+}
 
 let assignTicket = (group, ticket, transaction) => {
   if (!transaction) {
@@ -12,7 +17,7 @@ let assignTicket = (group, ticket, transaction) => {
   }
   var promises = [];
   promises.push(group.increment('totalNoOfPeople', {by: ticket.noOfPeople, transaction: transaction}));
-  promises.push(ticket.update({groupId: group.groupId}, {transaction: transaction}));
+  promises.push(updateTicket(group, ticket, transaction));
   return Promise.all(promises);
 }
 
@@ -32,7 +37,7 @@ let createNewGroupAndAssignTicket = (event, ticket, transaction) => {
       { transaction: transaction }
     )
     .then((group) => {
-      return ticket.update({ groupId: group.groupId }, { transaction: transaction });
+      return updateTicket(group, ticket, transaction);
     });
 }
 
@@ -41,7 +46,10 @@ let $controller = () => {
     .findAll(
       {
         where: { groupId: null },
-        include: [{ model: models.Event, as: 'event', include: [{ model: models.Group, as: 'groups', where: {totalNoOfPeople: {$lt: models.sequelize.literal('maxPeoplePerGroup - noOfPeople')}}, required: false }] }]
+        include: [
+          { model: models.Event, as: 'event', include: [{ model: models.Group, as: 'groups', where: {totalNoOfPeople: {$lt: models.sequelize.literal('maxPeoplePerGroup - noOfPeople')}}, required: false}] },
+          { model: models.User, as: 'user' }
+        ]
       }
     )
     .then((tickets) => {
@@ -51,6 +59,11 @@ let $controller = () => {
           return createNewGroupAndAssignTicket(ticket.event, ticket);
         }
         return assignTicket(ticket.event.groups[0], ticket);
+      });
+    })
+    .then((tickets) => {
+      return Promise.map(tickets, (ticket) => {
+        bot.sendMessage(ticket.user.userId, "Your ticket has been matched to a group in the queue! The estimated waiting for " + ticket.event.eventName + " is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
       });
     });
 
