@@ -62,6 +62,9 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
         });
     })
     .then((ticket) => {
+      if (!ticket) {
+        throw new Error('You are not queueing for any events right now.');
+      }
       _ticket = ticket;
       return _ticket.getGroup();
     })
@@ -70,5 +73,11 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
         return updateGroupAndCancelTicket(group, _ticket, _user);
       }
       return cancelTicket(_ticket, _user);
+    })
+    .then(() => {
+      bot.sendMessage(replyChatId, "Your ticket #" + _ticket.ticketId + " has been cancelled.")
+    })
+    .catch((err) => {
+      bot.sendMessage(replyChatId, err.message);
     });
 });
