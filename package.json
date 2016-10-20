@@ -26,6 +26,7 @@
     "moment": "^2.14.1",
     "mysql": "^2.11.1",
     "node-telegram-bot-api": "^0.23.3",
-    "sequelize": "^3.24.4"
+    "sequelize": "^3.24.4",
+    "utown-queue-db": "git+https://github.com/mauris/utown-queue-db"
   }
 }

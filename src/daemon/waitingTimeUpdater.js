@@ -1,4 +1,4 @@
-const models = require('../database');
+const models = require('utown-queue-db');
 
 console.log('Daemon worker #' + process.pid + ' started.');
 

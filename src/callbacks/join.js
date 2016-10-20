@@ -1,5 +1,5 @@
 const bot = require('../bot');
-const models = require('../database');
+const models = require('utown-queue-db');
 const Promise = require('bluebird');
 
 let createTicket = (numberOfPeople, _user, _event) => {

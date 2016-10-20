@@ -1,5 +1,5 @@
 const bot = require('../bot');
-const models = require('../database');
+const models = require('utown-queue-db');
 const Promise = require('bluebird');
 
 const BOT_USERNAME = process.env.BOT_USERNAME;

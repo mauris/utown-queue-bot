@@ -1,4 +1,4 @@
-const models = require('../database');
+const models = require('utown-queue-db');
 const Promise = require('bluebird');
 const bot = require('../bot');
 
