@@ -42,31 +42,33 @@ let createNewGroupAndAssignTicket = (event, ticket, transaction) => {
 }
 
 let $controller = () => {
-  models.Ticket
-    .findAll(
-      {
-        where: { groupId: null },
-        include: [
-          { model: models.Event, as: 'event', include: [{ model: models.Group, as: 'groups', where: {totalNoOfPeople: {$lt: models.sequelize.literal('maxPeoplePerGroup - noOfPeople')}}, required: false}] },
-          { model: models.User, as: 'user' }
-        ]
-      }
-    )
-    .then((tickets) => {
-      return Promise.map(tickets, (ticket) => {
-        if (ticket.event.groups.length == 0) {
-          // no group found
-          return createNewGroupAndAssignTicket(ticket.event, ticket);
+  models.sequelize.transaction((t) => {
+    return models.Ticket
+      .findAll(
+        {
+          where: { groupId: null },
+          include: [
+            { model: models.Event, as: 'event', include: [{ model: models.Group, as: 'groups', where: {totalNoOfPeople: {$lt: models.sequelize.literal('maxPeoplePerGroup - noOfPeople')}}, required: false}] },
+            { model: models.User, as: 'user' }
+          ],
+          transaction: t
         }
-        return assignTicket(ticket.event.groups[0], ticket);
+      )
+      .then((tickets) => {
+        return Promise.map(tickets, (ticket) => {
+          if (ticket.event.groups.length == 0) {
+            // no group found
+            return createNewGroupAndAssignTicket(ticket.event, ticket, t);
+          }
+          return assignTicket(ticket.event.groups[0], ticket, t);
+        });
+      })
+      .then((tickets) => {
+        return Promise.map(tickets, (ticket) => {
+          bot.sendMessage(ticket.user.userId, "Your ticket has been matched to a group in the queue! The estimated waiting for " + ticket.event.eventName + " is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
+        });
       });
-    })
-    .then((tickets) => {
-      return Promise.map(tickets, (ticket) => {
-        bot.sendMessage(ticket.user.userId, "Your ticket has been matched to a group in the queue! The estimated waiting for " + ticket.event.eventName + " is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
-      });
-    });
-
+  });
 };
 
 $controller();
