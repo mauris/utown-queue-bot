@@ -46,7 +46,7 @@ let $controller = () => {
   return models.Ticket
     .findAll(
       {
-        where: { groupId: null, isActive: 1 },
+        where: { groupId: null, isActive: true },
         include: [
           { model: models.Event, as: 'event'},
           { model: models.User, as: 'user' }

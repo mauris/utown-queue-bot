@@ -5,11 +5,11 @@ const Promise = require('bluebird');
 const BOT_USERNAME = process.env.BOT_USERNAME;
 const COMMAND_REGEX = /^\/cancel(@\w+)*\s*/i;
 
-let cancelTicket = (ticket, user, transaction) => {
+let cancelTicket = (ticket, transaction) => {
   if (!transaction) {
     return models.sequelize
       .transaction((t) => {
-        return cancelTicket(ticket, user, t);
+        return cancelTicket(ticket, t);
       });
   }
   return Promise.all([
@@ -17,29 +17,29 @@ let cancelTicket = (ticket, user, transaction) => {
       { isActive: false },
       { transaction: transaction }
     ),
-    user.update(
+    models.User.update(
       { isInQueue: false },
-      { transaction: transaction }
+      { where: { userId: ticket.userId }, transaction: transaction }
     )
   ]);
 };
 
-let updateGroupAndCancelTicket = (group, ticket, user, transaction) => {
+let updateGroupAndCancelTicket = (group, ticket, transaction) => {
   if (!transaction) {
     return models.sequelize
       .transaction((t) => {
-        return updateGroupAndCancelTicket(group, ticket, user, t);
+        return updateGroupAndCancelTicket(group, ticket, t);
       });
   }
 
   // if there is only one ticket left and the last ticket cancels, then we can say good bye to the group.
   if (group.totalNoOfPeople === ticket.noOfPeople) {
-    return cancelTicket(ticket, user, transaction)
+    return cancelTicket(ticket, transaction)
       .then(group.destroy({transaction: transaction}));
   }
 
   return Promise.all([
-    cancelTicket(ticket, user, transaction),
+    cancelTicket(ticket, transaction),
     group.decrement("totalNoOfPeople", {by: ticket.noOfPeople})
   ])
 };
@@ -76,7 +76,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     })
     .then((group) => {
       if (group) {
-        return updateGroupAndCancelTicket(group, _ticket, _user);
+        return updateGroupAndCancelTicket(group, _ticket);
       }
       return cancelTicket(_ticket, _user);
     })
