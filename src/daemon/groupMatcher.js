@@ -46,7 +46,7 @@ let $controller = () => {
   return models.Ticket
     .findAll(
       {
-        where: { groupId: null, isActive: true, isPresent: false },
+        where: { groupId: null, isActive: true },
         include: [
           { model: models.Event, as: 'event'},
           { model: models.User, as: 'user' }
@@ -58,7 +58,7 @@ let $controller = () => {
       return Promise.each(_tickets, (ticket) => {
         return models.sequelize.transaction((t) => {
           return ticket.event
-            .getGroups({ where: {totalNoOfPeople: {$lte: ticket.event.maxPeoplePerGroup - ticket.noOfPeople }}, transaction: t })
+            .getGroups({ where: { isPresent: false, totalNoOfPeople: {$lte: ticket.event.maxPeoplePerGroup - ticket.noOfPeople }}, transaction: t })
             .then((groups) => {
               if (groups.length == 0) {
                 // no group found
