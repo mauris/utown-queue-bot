@@ -14,7 +14,7 @@ let cancelTicket = (ticket, transaction) => {
   }
   return Promise.all([
     ticket.update(
-      { isActive: false },
+      { isActive: false, groupId: null },
       { transaction: transaction }
     ),
     models.User.update(
