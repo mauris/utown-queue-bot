@@ -32,6 +32,12 @@ let updateGroupAndCancelTicket = (group, ticket, user, transaction) => {
       });
   }
 
+  // if there is only one ticket left and the last ticket cancels, then we can say good bye to the group.
+  if (group.totalNoOfPeople === ticket.noOfPeople) {
+    return cancelTicket(ticket, user, transaction)
+      .then(group.destroy({transaction: transaction}));
+  }
+
   return Promise.all([
     cancelTicket(ticket, user, transaction),
     group.decrement("totalNoOfPeople", {by: ticket.noOfPeople})
