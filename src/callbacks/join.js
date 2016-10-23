@@ -3,35 +3,62 @@ const models = require('utown-queue-db');
 const Promise = require('bluebird');
 const moment = require('moment');
 
-let createTicket = (numberOfPeople, _user, _event) => {
-  return models.sequelize
-    .transaction((t) => {
-      var promises = [];
-      promises.push(
-        models.Ticket
-          .create(
-            {
-              "userId": _user.userId,
-              "eventId": _event.eventId,
-              "noOfPeople": numberOfPeople
-            },
-            { transaction: t }
-          )
-      );
+let createTicket = (numberOfPeople, _user, _event, group, transaction) => {
+  if (!transaction) {
+    return models.sequelize
+      .transaction((t) => {
+        return createTicket(numberOfPeople, _user, _event, group, t);
+      });
+  }
 
-      promises.push(
-        _user
-          .update(
-            {
-              "isInQueue": true
-            },
-            { transaction: t }
-          )
-      );
+  var promises = [];
+  promises.push(
+    models.Ticket
+      .create(
+        {
+          "userId": _user.userId,
+          "eventId": _event.eventId,
+          "groupId": group ? group.groupId : null,
+          "datetimeStarted": group ? models.sequelize.fn("NOW") : null,
+          "noOfPeople": numberOfPeople
+        },
+        { transaction: transaction }
+      )
+  );
 
-      return Promise.all(promises);
-    });
+  promises.push(
+    _user
+      .update(
+        {
+          "isInQueue": true
+        },
+        { transaction: transaction }
+      )
+  );
+
+  return Promise.all(promises);
 };
+
+let createTicketAndGroup = (numberOfPeople, _user, _event, transaction) => {
+  if (!transaction) {
+    return models.sequelize
+      .transaction((t) => {
+        return createTicketAndGroup(numberOfPeople, _user, _event, t);
+      });
+  }
+  return models.Group
+    .create(
+      {
+        eventId: _event.eventId,
+        totalNoOfPeople: numberOfPeople
+      },
+      { transaction: transaction }
+    )
+    .then((group) => {
+      console.log(group);
+      return createTicket(numberOfPeople, _user, _event, group, transaction);
+    });
+}
 
 module.exports = (query, code, num) => {
   let name = query.message.chat.first_name;
@@ -65,9 +92,11 @@ module.exports = (query, code, num) => {
             throw new Error('The event code entered was not found.');
           }
           _event = event;
-          console.log(moment().diff(moment(tickets[0].datetimeRequested), 'minutes', true));
           if (tickets[0] && moment().diff(moment(tickets[0].datetimeRequested), 'minutes', true) < 2) {
             throw new Error('You have recently requested for a ticket. You need to wait for ' + moment(tickets[0].datetimeRequested).fromNow(true) + ' before you can request again.');
+          }
+          if (num == _event.maxPeoplePerGroup) {
+            return createTicketAndGroup(num, _user, _event);
           }
           return createTicket(num, _user, _event);
         })
