@@ -19,7 +19,7 @@ let createTicket = (numberOfPeople, _user, _event, group, transaction) => {
           "userId": _user.userId,
           "eventId": _event.eventId,
           "groupId": group ? group.groupId : null,
-          "datetimeStarted": group ? models.sequelize.fn("NOW") : null,
+          "datetimeStart": group ? models.sequelize.fn("NOW") : null,
           "noOfPeople": numberOfPeople
         },
         { transaction: transaction }
