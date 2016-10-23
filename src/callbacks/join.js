@@ -55,7 +55,6 @@ let createTicketAndGroup = (numberOfPeople, _user, _event, transaction) => {
       { transaction: transaction }
     )
     .then((group) => {
-      console.log(group);
       return createTicket(numberOfPeople, _user, _event, group, transaction);
     });
 }
