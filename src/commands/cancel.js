@@ -62,7 +62,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     .findOrCreate({ where: { name: name, userId: replyChatId } })
     .then((users) => {
       _user = users[0];
-      if (!user.isInQueue) {
+      if (!_user.isInQueue) {
         throw new Error('You are not queueing for any events right now.');
       }
       return models.Ticket
@@ -87,7 +87,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
       return cancelTicket(_ticket, _user);
     })
     .then(() => {
-      bot.sendMessage(replyChatId, "Your ticket #" + _ticket.ticketId + " has been cancelled.")
+      bot.sendMessage(replyChatId, "Your ticket #" + _ticket.ticketId + " has been cancelled.\n\nYou need to wait for 2 minutes before you can request for another ticket.")
     })
     .catch((err) => {
       bot.sendMessage(replyChatId, err.message);
