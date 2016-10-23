@@ -1,6 +1,7 @@
 const bot = require('../bot');
 const models = require('utown-queue-db');
 const Promise = require('bluebird');
+const moment = require('moment');
 
 let createTicket = (numberOfPeople, _user, _event) => {
   return models.sequelize
@@ -54,16 +55,20 @@ module.exports = (query, code, num) => {
           if (_user.isInQueue) {
             throw new Error('You are already queueing up for an activity.');
           }
-          return models.Event
-            .find({ where: { eventCode: code } });
+          return Promise.all([
+            models.Event.find({ where: { eventCode: code } }),
+            _user.getTickets({ order: [["ticketId", "DESC"]], limit: 1 })
+          ]);
         })
-        .then((event) => {
+        .spread((event, tickets) => {
           if (!event) {
             throw new Error('The event code entered was not found.');
           }
           _event = event;
-        })
-        .then(() => {
+          console.log(moment().diff(moment(tickets[0].datetimeRequested), 'minutes', true));
+          if (tickets[0] && moment().diff(moment(tickets[0].datetimeRequested), 'minutes', true) < 2) {
+            throw new Error('You have recently requested for a ticket. You need to wait for ' + moment(tickets[0].datetimeRequested).fromNow(true) + ' before you can request again.');
+          }
           return createTicket(num, _user, _event);
         })
         .then((result) => {
