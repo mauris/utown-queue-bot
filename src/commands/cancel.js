@@ -62,6 +62,9 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     .findOrCreate({ where: { name: name, userId: replyChatId } })
     .then((users) => {
       _user = users[0];
+      if (!user.isInQueue) {
+        throw new Error('You are not queueing for any events right now.');
+      }
       return models.Ticket
         .find({
           where: {
