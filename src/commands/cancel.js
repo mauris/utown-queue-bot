@@ -50,7 +50,10 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     return;
   }
 
-  let name = msg.chat.first_name + " " + msg.chat.last_name;
+  let name = msg.chat.first_name;
+  if (msg.chat.last_name) {
+    name += " " + msg.chat.last_name;
+  }
   let _user = null;
   let _ticket = null;
 

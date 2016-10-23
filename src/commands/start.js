@@ -10,6 +10,9 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     return;
   }
 
-  let name = msg.chat.first_name + " " + msg.chat.last_name;
   bot.sendMessage(replyChatId, "Hi " + name + "! Welcome to UTown Pandemonium: Halloween Haunted Houses presented by UTown Residential Colleges.\n\nI will be your tour guide \u{1F608} this evening.")
+  let name = msg.chat.first_name;
+  if (msg.chat.last_name) {
+    name += " " + msg.chat.last_name;
+  }
 });

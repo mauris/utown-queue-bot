@@ -33,7 +33,10 @@ let createTicket = (numberOfPeople, _user, _event) => {
 };
 
 module.exports = (query, code, num) => {
-  let name = query.message.chat.first_name + " " + query.message.chat.last_name;
+  let name = msg.chat.first_name;
+  if (msg.chat.last_name) {
+    name += " " + msg.chat.last_name;
+  }
   let userId = query.message.chat.id;
   let callbackId = query.id;
 
