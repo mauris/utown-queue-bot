@@ -64,7 +64,7 @@ module.exports = (query, code, num) => {
         .then((result) => {
           let ticket = result[0];
           bot.answerCallbackQuery(callbackId, 'You have joined the queue for ' + _event.eventName + '.', true);
-          bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nI will notify you when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.', {hide_keyboard: true});
+          bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nThe bot will now form group for your ticket.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.', {hide_keyboard: true});
         })
     })
     .catch((err) => {
