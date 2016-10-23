@@ -33,9 +33,9 @@ let createTicket = (numberOfPeople, _user, _event) => {
 };
 
 module.exports = (query, code, num) => {
-  let name = msg.chat.first_name;
-  if (msg.chat.last_name) {
-    name += " " + msg.chat.last_name;
+  let name = query.message.chat.first_name;
+  if (query.message.chat.last_name) {
+    name += " " + query.message.chat.last_name;
   }
   let userId = query.message.chat.id;
   let callbackId = query.id;
@@ -62,6 +62,8 @@ module.exports = (query, code, num) => {
             throw new Error('The event code entered was not found.');
           }
           _event = event;
+        })
+        .then(() => {
           return createTicket(num, _user, _event);
         })
         .then((result) => {
