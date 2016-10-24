@@ -11,7 +11,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
 
   var eventCode = match[3];
   bot
-    .sendMessage(replyChatId, "How many people is joining together (including yourself)?", {
+    .sendMessage(replyChatId, "How many people are joining you in the queue (including yourself)?", {
       reply_markup: {
           inline_keyboard: [[
             {
