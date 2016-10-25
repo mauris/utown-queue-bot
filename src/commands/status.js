@@ -6,7 +6,7 @@ const BOT_USERNAME = process.env.BOT_USERNAME;
 const COMMAND_REGEX = /^\/status(@\w+)*\s*/i;
 
 bot.onText(COMMAND_REGEX, (msg, match) => {
-  var replyChatId = msg.chat.id;
+  let replyChatId = msg.chat.id;
   if (msg.chat.type !== 'private' || (match[1] && match[1].toLowerCase() !== BOT_USERNAME)) {
     return;
   }
