@@ -55,7 +55,7 @@ let processTicket = (event, ticket, transaction) => {
       if (group) {
         return assignTicket(group, ticket, transaction);
       }
-      return createNewGroupAndAssignTicket(ticket.event, ticket, transaction);
+      return createNewGroupAndAssignTicket(event, ticket, transaction);
     })
     .then(() => {
       bot.sendMessage(ticket.user.userId, "Your ticket has been matched to a group in the queue! The estimated waiting for " + event.eventName + " is " + Math.ceil(event.averageWaitingTime / 60) + " mins.");
@@ -64,7 +64,7 @@ let processTicket = (event, ticket, transaction) => {
 
 let $controller = () => {
   return models.Event
-    .findAll()
+    .findAll({})
     .then((events) => {
       return Promise.map(events, (event) => {
         return models.Ticket
@@ -75,7 +75,7 @@ let $controller = () => {
           })
           .then((tickets) => {
             return Promise.each(tickets, (ticket) => {
-              return processTicket();
+              return processTicket(event, ticket);
             })
           })
       });
