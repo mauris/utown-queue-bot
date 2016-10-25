@@ -9,6 +9,11 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     return;
   }
 
+  let name = msg.chat.first_name;
+  if (msg.chat.last_name) {
+    name += " " + msg.chat.last_name;
+  }
+
   var eventCode = match[3];
   bot
     .sendMessage(replyChatId, "How many people are joining you in the queue (including yourself)?", {
