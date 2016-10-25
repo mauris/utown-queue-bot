@@ -71,7 +71,7 @@ module.exports = (query, eventId, num) => {
   let _event = null;
 
   // hide the keyboard now that it's done.
-  bot.editMessageText('', , {chat_id: userId, message_id: query.message.message_id});
+
   bot.editMessageReplyMarkup({reply_markup: {inline_keyboard: [[]]}}, {chat_id: userId, message_id: query.message.message_id});
 
   return models.sequelize
@@ -99,9 +99,9 @@ module.exports = (query, eventId, num) => {
           let ticket = result[0];
           bot.answerCallbackQuery(callbackId, 'You have joined the queue for ' + _event.eventName + '.', true);
           if (num >= _event.minPeoplePerGroup) {
-            return bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.');
+            return bot.editMessageText('Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.', {chat_id: userId, message_id: query.message.message_id});
           }
-          return bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nThe bot will now form group for your ticket.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.');
+          return bot.editMessageText('Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nThe bot will now form group for your ticket.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.', {chat_id: userId, message_id: query.message.message_id});
         })
     })
     .catch((err) => {
