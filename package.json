@@ -1,5 +1,5 @@
 {
-  "name": "utownqueuebot",
+  "name": "utown-queue-bot",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -8,25 +8,23 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mauris/utownqueuebot.git"
+    "url": "git+https://github.com/mauris/utown-queue-bot.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/mauris/utownqueuebot/issues"
+    "url": "https://github.com/mauris/utown-queue-bot/issues"
   },
   "engines": {
     "node": "^6.5.0"
   },
   "private": true,
-  "homepage": "https://github.com/mauris/utownqueuebot#readme",
+  "homepage": "https://github.com/mauris/utown-queue-bot#readme",
   "dependencies": {
     "bluebird": "^3.4.3",
     "dotenv": "^2.0.0",
     "moment": "^2.14.1",
-    "mysql": "^2.11.1",
     "node-telegram-bot-api": "^0.23.3",
-    "sequelize": "^3.24.4",
     "utown-queue-db": "git+https://github.com/mauris/utown-queue-db"
   }
 }
