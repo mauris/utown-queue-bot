@@ -9,23 +9,20 @@ bot.on('callback_query', (query) => {
   }
 
   bot.sendChatAction(replyChatId, "typing");
-  jwt.verifyAsync(query.data, process.env.CALLBACK_SECRET)
-    .then((decoded) => {
-      let data = null;
+  let data = null;
 
-      try {
-        data = JSON.parse(decoded);
-      } catch (e) {}
-      if (!data) {
-        return;
-      }
+  try {
+    data = JSON.parse(query.data);
+  } catch (e) {}
+  if (!data) {
+    return;
+  }
 
-      switch (data[0]) {
-        case 'join':
-          require('./join')(query, +data[1], data[2]);
-          break;
-        default:
-          break;
-      }
-    });
+  switch (data[0]) {
+    case 'join':
+      require('./join')(query, +data[1], data[2]);
+      break;
+    default:
+      break;
+  }
 });
