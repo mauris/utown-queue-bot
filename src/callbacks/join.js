@@ -93,7 +93,7 @@ module.exports = (query, eventId, num) => {
           if (num >= _event.minPeoplePerGroup) {
             return createTicketAndGroup(num, _user, _event, t);
           }
-          return createTicket(num, _user, _event, t);
+          return createTicket(num, _user, _event, null, t);
         })
         .then((result) => {
           let ticket = result[0];
