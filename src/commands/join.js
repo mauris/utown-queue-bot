@@ -1,4 +1,7 @@
 const bot = require('../bot');
+const models = require('utown-queue-db');
+const moment = require('moment');
+const Promise = require('bluebird');
 
 const BOT_USERNAME = process.env.BOT_USERNAME;
 const COMMAND_REGEX = /^\/join(@\w+)*(\s+(.+))*\s*/i;
