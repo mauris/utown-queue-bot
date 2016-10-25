@@ -82,17 +82,17 @@ module.exports = (query, code, num) => {
             throw new Error('You are already queueing up for an activity.');
           }
           return Promise.all([
-            models.Event.find({ where: { eventCode: code } }),
-            _user.getTickets({ order: [["ticketId", "DESC"]], limit: 1 })
+            models.Event.findOne({ where: { eventCode: code }, transaction: t }),
+            models.Ticket.findOne({ where: { userId: _user.userId }, order: [["ticketId", "DESC"]], transaction: t })
           ]);
         })
-        .spread((event, tickets) => {
+        .spread((event, ticket) => {
           if (!event) {
             throw new Error('The event code entered was not found.');
           }
           _event = event;
-          if (tickets[0] && moment().diff(moment(tickets[0].datetimeRequested), 'minutes', true) < 2) {
-            throw new Error('You have recently requested for a ticket. You need to wait for ' + moment(tickets[0].datetimeRequested).fromNow(true) + ' before you can request again.');
+          if (ticket && moment().diff(moment(ticket.datetimeRequested), 'minutes', true) < 2) {
+            throw new Error('You have recently requested for a ticket. You need to wait for ' + moment(ticket.datetimeRequested).fromNow(true) + ' before you can request again.');
           }
           if (num >= _event.minPeoplePerGroup) {
             return createTicketAndGroup(num, _user, _event);
