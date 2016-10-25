@@ -14,37 +14,50 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     name += " " + msg.chat.last_name;
   }
 
+
+  bot.sendChatAction(replyChatId, "typing");
+
   var eventCode = match[3];
-  bot
-    .sendMessage(replyChatId, "How many people are joining you in the queue (including yourself)?", {
-      reply_markup: {
-          inline_keyboard: [[
-            {
-              text: "1",
-              callback_data: JSON.stringify(["join", eventCode, "1"]),
-            },
-            {
-              text: "2",
-              callback_data: JSON.stringify(["join", eventCode, "2"]),
-            },
-            {
-              text: "3",
-              callback_data: JSON.stringify(["join", eventCode, "3"]),
-            },
-            {
-              text: "4",
-              callback_data: JSON.stringify(["join", eventCode, "4"]),
-            },
-            {
-              text: "5",
-              callback_data: JSON.stringify(["join", eventCode, "5"]),
-            },
-            {
-              text: "6",
-              callback_data: JSON.stringify(["join", eventCode, "6"]),
-            }
-          ]],
-      },
+  let _user = null;
+
+  return models.sequelize
+    .transaction((t) => {
+      return models.User
+        .findOrCreate({ where: { name: name, userId: replyChatId } })
+        .then((users) => {
+          _user = users[0];
+          if (_user.isInQueue) {
+            throw new Error('You are already queueing up for an activity.');
+          }
+          return Promise.all([
+            models.Event.findOne({ where: { eventCode: eventCode }, transaction: t }),
+            models.Ticket.findOne({ where: { userId: _user.userId }, order: [["ticketId", "DESC"]], transaction: t })
+          ]);
+        })
+        .spread((event, ticket) => {
+          if (!event) {
+            throw new Error('The event code entered is invalid. ):');
+          }
+
+          if (ticket && moment().diff(moment(ticket.datetimeRequested), 'minutes', true) < 2) {
+            throw new Error('You have recently requested for a ticket. You need to wait for ' + moment(ticket.datetimeRequested).fromNow(true) + ' before you can request again.');
+          }
+
+          let keyboard = [];
+          for (var i = 1; i <= event.maxPeoplePerGroup; ++i) {
+            keyboard.push({
+              text: i,
+              callback_data: JSON.stringify(["join", event.eventId, i]),
+            })
+          }
+          return bot
+            .sendMessage(replyChatId, "How many people are joining you in the queue (including yourself)?", {
+              reply_markup: { inline_keyboard: [keyboard] },
+            })
+        });
     })
-    .catch(console.error);
+    .catch((err) => {
+      bot.sendMessage(replyChatId, err.message);
+    });
+
 });
