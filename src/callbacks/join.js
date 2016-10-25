@@ -59,7 +59,7 @@ let createTicketAndGroup = (numberOfPeople, _user, _event, transaction) => {
     });
 }
 
-module.exports = (query, code, num) => {
+module.exports = (query, eventId, num) => {
   let name = query.message.chat.first_name;
   if (query.message.chat.last_name) {
     name += " " + query.message.chat.last_name;
@@ -81,19 +81,13 @@ module.exports = (query, code, num) => {
           if (_user.isInQueue) {
             throw new Error('You are already queueing up for an activity.');
           }
-          return Promise.all([
-            models.Event.findOne({ where: { eventCode: code }, transaction: t }),
-            models.Ticket.findOne({ where: { userId: _user.userId }, order: [["ticketId", "DESC"]], transaction: t })
-          ]);
+          return models.Event.findOne({ where: { eventId: eventId }, transaction: t });
         })
-        .spread((event, ticket) => {
+        .then((event) => {
           if (!event) {
             throw new Error('The event code entered was not found.');
           }
           _event = event;
-          if (ticket && moment().diff(moment(ticket.datetimeRequested), 'minutes', true) < 2) {
-            throw new Error('You have recently requested for a ticket. You need to wait for ' + moment(ticket.datetimeRequested).fromNow(true) + ' before you can request again.');
-          }
           if (num >= _event.minPeoplePerGroup) {
             return createTicketAndGroup(num, _user, _event);
           }
@@ -103,9 +97,9 @@ module.exports = (query, code, num) => {
           let ticket = result[0];
           bot.answerCallbackQuery(callbackId, 'You have joined the queue for ' + _event.eventName + '.', true);
           if (num >= _event.minPeoplePerGroup) {
-            return bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.', {hide_keyboard: true});
+            return bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.');
           }
-          return bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nThe bot will now form group for your ticket.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.', {hide_keyboard: true});
+          return bot.sendMessage(userId, 'Ticket #' + ticket.ticketId + '\n\nYou have joined the queue for ' + _event.eventName + ' with ' + num + ' people.\n\nThe bot will now form group for your ticket.\n\nI will notify you when your group has been formed and when it is 5 minutes before your turn. Show up promptly or I will give your turn to someone else \u{1F608}.');
         })
     })
     .catch((err) => {

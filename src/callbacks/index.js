@@ -18,7 +18,7 @@ bot.on('callback_query', (query) => {
 
   switch (data[0]) {
     case 'join':
-      require('./join')(query, data[1], data[2]);
+      require('./join')(query, +data[1], data[2]);
       break;
     default:
       break;
