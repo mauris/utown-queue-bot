@@ -47,8 +47,8 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
           for (var i = 1; i <= event.maxPeoplePerGroup; ++i) {
             keyboard.push({
               text: i,
-              callback_data: JSON.stringify(["join", event.eventId, i]),
-            })
+              callback_data: jwt.sign(JSON.stringify(["join", event.eventId, i]), process.env.CALLBACK_SECRET),
+            });
           }
           return bot
             .sendMessage(replyChatId, "How many people are joining you in the queue (including yourself)?", {
