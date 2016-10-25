@@ -39,39 +39,45 @@ let createNewGroupAndAssignTicket = (event, ticket, transaction) => {
     .then((group) => {
       return updateTicket(group, ticket, transaction);
     });
-}
+};
 
-let $controller = () => {
-  let _tickets = [];
-  return models.Ticket
-    .findAll(
-      {
-        where: { groupId: null, isActive: true },
-        include: [
-          { model: models.Event, as: 'event'},
-          { model: models.User, as: 'user' }
-        ]
-      }
-    )
-    .then((tickets) => {
-      _tickets = tickets;
-      return Promise.each(_tickets, (ticket) => {
-        return models.sequelize.transaction((t) => {
-          return ticket.event
-            .getGroups({ where: { isPresent: false, totalNoOfPeople: {$lte: ticket.event.maxPeoplePerGroup - ticket.noOfPeople }}, transaction: t })
-            .then((groups) => {
-              if (groups.length == 0) {
-                // no group found
-                return createNewGroupAndAssignTicket(ticket.event, ticket, t);
-              }
-              return assignTicket(groups[0], ticket, t);
-            });
-        });
+let processTicket = (event, ticket, transaction) => {
+  if (!transaction) {
+    return models.sequelize
+      .transaction((t) => {
+        return processTicket(event, ticket, t);
       });
+  }
+
+  return models.Group
+    .findOne({ where: { eventId: event.eventId, isPresent: false, totalNoOfPeople: {$lte: event.maxPeoplePerGroup - ticket.noOfPeople }}, transaction: transaction })
+    .then((group) => {
+      if (group) {
+        return assignTicket(group, ticket, transaction);
+      }
+      return createNewGroupAndAssignTicket(ticket.event, ticket, transaction);
     })
     .then(() => {
-      return Promise.map(_tickets, (ticket) => {
-        return bot.sendMessage(ticket.user.userId, "Your ticket has been matched to a group in the queue! The estimated waiting for " + ticket.event.eventName + " is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
+      bot.sendMessage(ticket.user.userId, "Your ticket has been matched to a group in the queue! The estimated waiting for " + event.eventName + " is " + Math.ceil(event.averageWaitingTime / 60) + " mins.");
+    });
+};
+
+let $controller = () => {
+  return models.Event
+    .findAll()
+    .then((events) => {
+      return Promise.map(events, (event) => {
+        return models.Ticket
+          .findAll({
+            where: { eventId: event.eventId, groupId: null, isActive: true },
+            include: [{ model: models.User, as: 'user' }],
+            order: [["noOfPeople", "DESC"]]
+          })
+          .then((tickets) => {
+            return Promise.each(tickets, (ticket) => {
+              return processTicket();
+            })
+          })
       });
     });
 };
