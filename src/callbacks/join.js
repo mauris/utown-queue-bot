@@ -71,8 +71,9 @@ module.exports = (query, eventId, num) => {
   let _event = null;
 
   // hide the keyboard now that it's done.
+  bot.editMessageText('', , {chat_id: userId, message_id: query.message.message_id});
   bot.editMessageReplyMarkup({reply_markup: {inline_keyboard: [[]]}}, {chat_id: userId, message_id: query.message.message_id});
-  
+
   return models.sequelize
     .transaction((t) => {
       return models.User
