@@ -23,7 +23,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     .then((users) => {
       _user = users[0];
       if (!_user.isInQueue) {
-        throw new Error('You are not queueing for any events right now.');
+        throw new Error('You are not in a queue right now.');
       }
       return models.Ticket
         .find({
@@ -39,7 +39,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
     })
     .then((ticket) => {
       if (!ticket) {
-        throw new Error('You are not queueing for any events right now.');
+        throw new Error('You are not in a queue right now.');
       }
       _ticket = ticket;
       if (_ticket.group) {
