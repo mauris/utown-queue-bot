@@ -3,3 +3,4 @@ require('./start');
 require('./cancel');
 require('./map');
 require('./status');
+require('./about');
