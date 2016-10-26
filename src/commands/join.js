@@ -54,7 +54,7 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
 
       return bot
         .sendMessage(replyChatId, "How many people are joining you in the queue (including yourself)?", {
-          reply_markup: { inline_keyboard: [keyboard] },
+          reply_markup: { inline_keyboard: [keyboard, [{ text: 'Cancel', callback_data: JSON.stringify(["cancel"]) }]] },
         });
     })
     .catch((err) => {

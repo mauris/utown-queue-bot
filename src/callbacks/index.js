@@ -22,6 +22,9 @@ bot.on('callback_query', (query) => {
     case 'join':
       require('./join')(query, +data[1], data[2]);
       break;
+    case 'cancel':
+      require('./cancel')(query);
+      break;
     default:
       break;
   }
