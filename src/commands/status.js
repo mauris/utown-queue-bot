@@ -46,9 +46,9 @@ bot.onText(COMMAND_REGEX, (msg, match) => {
         return models.Group.count({ where: { eventId: ticket.eventId, groupId: { $lt: _ticket.group.groupId }, datetimeStart: null } })
           .then((count) => {
             if (count < 3) {
-              return bot.sendMessage(replyChatId, "Your turn in the queue at " + ticket.event.eventName +" should be coming up real soon. The current estimated waiting time is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
+              return bot.sendMessage(replyChatId, "Your turn in the queue at " + ticket.event.eventName +" should be coming up real soon.\n\nThe current estimated waiting time (from the end of the queue) is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
             }
-            return bot.sendMessage(replyChatId, "There are about " + count + " groups before yours in the queue at " + ticket.event.eventName +". The current estimated waiting time is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
+            return bot.sendMessage(replyChatId, "There are about " + count + " groups before yours in the queue at " + ticket.event.eventName +".\n\nThe current estimated waiting time (from the end of the queue) is " + Math.ceil(ticket.event.averageWaitingTime / 60) + " mins.");
           });
       }
       return bot.sendMessage(replyChatId, "Your ticket has currently waiting to be placed in a group for the queue.");
