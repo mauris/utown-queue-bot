@@ -5,6 +5,6 @@ module.exports = (query) => {
   let callbackId = query.id;
   try {
     bot.editMessageReplyMarkup({reply_markup: {inline_keyboard: [[]]}}, {chat_id: userId, message_id: query.message.message_id});
-    return bot.editMessageText('Okay, your request was cancelled.', {chat_id: userId, message_id: query.message.message_id});
+    return bot.sendMessage(userId, 'Okay, your request was cancelled.');
   } catch (e) {}
 };
